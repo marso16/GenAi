@@ -120,25 +120,35 @@ def predict_sentiment(review, model='logistic', vectorizer='tfidf'):
         review_vector = tv.transform([review])
     elif vectorizer == 'bow':
         review_vector = cv.transform([review])
-    elif vectorizer == "glove_embeddings":
-        review_vector = get_average_glove_vector(review, glove_embeddings, VECTOR_SIZE)
+    elif vectorizer == 'glove_embeddings':
+        review_vector = get_average_glove_vector(review, glove_embeddings, VECTOR_SIZE).reshape(1, -1)
     else:
-        raise ValueError("Vectorizer must be either 'tfidf' or 'bow'")
+        raise ValueError("Vectorizer must be 'tfidf', 'bow', or 'glove_embeddings'")
 
     # Predict using the chosen model
     if model == 'logistic':
-        prediction = lr_tfidf.predict(review_vector) if vectorizer == 'tfidf' else lr_bow.predict(review_vector)
+        if vectorizer == 'tfidf':
+            prediction = lr_tfidf.predict(review_vector)
+        elif vectorizer == 'bow':
+            prediction = lr_bow.predict(review_vector)
+        elif vectorizer == 'glove_embeddings':
+            prediction = logistic_glove_embeddings.predict(review_vector)
     elif model == 'svm':
-        prediction = svm_tfidf.predict(review_vector) if vectorizer == 'tfidf' else svm_bow.predict(review_vector)
+        if vectorizer == 'tfidf':
+            prediction = svm_tfidf.predict(review_vector)
+        elif vectorizer == 'bow':
+            prediction = svm_bow.predict(review_vector)
+        elif vectorizer == 'glove_embeddings':
+            prediction = svm_glove_embeddings.predict(review_vector)
     elif model == 'naive_bayes':
-        prediction = mnb_tfidf.predict(review_vector) if vectorizer == 'tfidf' else mnb_bow.predict(review_vector)
-    elif model == 'svm_glove':
-        prediction == svm_glove_embeddings.predict(review_vector)
-    elif model == 'logistic_glove':
-        prediction == logistic_glove_embeddings.predict(review_vector)
+        if vectorizer == 'tfidf':
+            prediction = mnb_tfidf.predict(review_vector)
+        elif vectorizer == 'bow':
+            prediction = mnb_bow.predict(review_vector)
     else:
-        raise ValueError("Model must be either 'logistic', 'svm', or 'naive_bayes'")
+        raise ValueError("Model must be 'logistic', 'svm', or 'naive_bayes'")
 
+    # Return the sentiment based on prediction
     return 'Positive' if prediction == 1 else 'Negative'
 
 # Endpoint for predicting sentiment
