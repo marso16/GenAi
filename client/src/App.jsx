@@ -53,9 +53,15 @@ const App = () => {
       });
 
       const data = await response.json();
-      dispatch(setResult(data.sentiment));
+      // Ensure the API response matches what the frontend expects
+      if (data.sentiment === "Positive" || data.sentiment === "Negative") {
+        dispatch(setResult(data.sentiment));
+      } else {
+        setError("Received an unexpected sentiment result.");
+      }
     } catch (error) {
       dispatch(setResult("Error: Network issue or server not available"));
+      setError("There was an error with the request.");
     }
   };
 

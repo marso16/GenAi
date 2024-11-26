@@ -8,6 +8,7 @@ const MODEL_OPTIONS = [
 const VECTORIZER_OPTIONS = [
   { value: "tfidf", label: "TF-IDF" },
   { value: "bow", label: "BoW" },
+  { value: "glove_embeddings", label: "Glove Embedding" },
 ];
 
 export { MODEL_OPTIONS, VECTORIZER_OPTIONS };
