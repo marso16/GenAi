@@ -3,7 +3,6 @@ export const API_URL = "http://127.0.0.1:8000/predict";
 const MODEL_OPTIONS = [
   { value: "logistic", label: "Logistic Regression" },
   { value: "svm", label: "SVM" },
-  { value: "naive_bayes", label: "Naive Bayes" },
 ];
 
 const VECTORIZER_OPTIONS = [

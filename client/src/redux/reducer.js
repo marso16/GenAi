@@ -1,10 +1,4 @@
-import {
-  SET_REVIEW,
-  SET_MODEL,
-  SET_VECTORIZER,
-  SET_RESULT,
-  ADD_TO_HISTORY,
-} from "./actions";
+import { SET_REVIEW, SET_MODEL, SET_VECTORIZER, SET_RESULT } from "./actions";
 
 const initialState = {
   review: "",
@@ -24,19 +18,6 @@ export const rootReducer = (state = initialState, action) => {
       return { ...state, selectedVectorizer: action.payload };
     case SET_RESULT:
       return { ...state, result: action.payload };
-    case ADD_TO_HISTORY:
-      return {
-        ...state,
-        reviewHistory: [
-          ...state.reviewHistory,
-          {
-            text: action.payload.text,
-            sentiment: action.payload.sentiment,
-            model: action.payload.model,
-            vectorizer: action.payload.vectorizer,
-          },
-        ],
-      };
     default:
       return state;
   }

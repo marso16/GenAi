@@ -1,8 +1,9 @@
+# type: ignore
 import pickle
 import re
 import os
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI 
+from fastapi.middleware.cors import CORSMiddleware 
 from pydantic import BaseModel
 
 # Load the pre-trained models and vectorizers
@@ -14,10 +15,6 @@ with open("./models/svm_bow.pkl", "rb") as f:
     svm_bow = pickle.load(f)
 with open("./models/svm_tfidf.pkl", "rb") as f:
     svm_tfidf = pickle.load(f)
-with open("./models/mnb_bow.pkl", "rb") as f:
-    mnb_bow = pickle.load(f)
-with open("./models/mnb_tfidf.pkl", "rb") as f:
-    mnb_tfidf = pickle.load(f)
 with open("./models/cv_vectorizer.pkl", "rb") as f:
     cv = pickle.load(f)
 with open("./models/tfidf_vectorizer.pkl", "rb") as f:
@@ -38,12 +35,11 @@ app.add_middleware(
 # Define a Pydantic model for input data
 class ReviewRequest(BaseModel):
     review: str
-    model: str = 'logistic'  # Options: 'logistic', 'svm', 'naive_bayes'
+    model: str = 'logistic'  # Options: 'logistic', 'svm'
     vectorizer: str = 'tfidf'  # Options: 'tfidf', 'bow'
 
 # Function for preprocessing and prediction
 def predict_sentiment(review, model='logistic', vectorizer='tfidf'):
-    # Preprocessing functions (reuse from your original code)
     def denoise_text(text):
         from bs4 import BeautifulSoup
         text = BeautifulSoup(text, "html.parser").get_text()
@@ -54,7 +50,7 @@ def predict_sentiment(review, model='logistic', vectorizer='tfidf'):
         return re.sub(pattern, '', text)
 
     def simple_stemmer(text):
-        from nltk.stem import PorterStemmer
+        from nltk.stem import PorterStemmer # type: ignore
         ps = PorterStemmer()
         return ' '.join([ps.stem(word) for word in text.split()])
 
@@ -85,10 +81,8 @@ def predict_sentiment(review, model='logistic', vectorizer='tfidf'):
         prediction = lr_tfidf.predict(review_vector) if vectorizer == 'tfidf' else lr_bow.predict(review_vector)
     elif model == 'svm':
         prediction = svm_tfidf.predict(review_vector) if vectorizer == 'tfidf' else svm_bow.predict(review_vector)
-    elif model == 'naive_bayes':
-        prediction = mnb_tfidf.predict(review_vector) if vectorizer == 'tfidf' else mnb_bow.predict(review_vector)
     else:
-        raise ValueError("Model must be either 'logistic', 'svm', or 'naive_bayes'")
+        raise ValueError("Model must be either 'logistic' or 'svm'")
 
     return 'Positive' if prediction == 1 else 'Negative'
 
