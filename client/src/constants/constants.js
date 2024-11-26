@@ -7,7 +7,7 @@ const MODEL_OPTIONS = [
 
 const VECTORIZER_OPTIONS = [
   { value: "tfidf", label: "TF-IDF" },
-  { value: "bow", label: "Bag of Words" },
+  { value: "bow", label: "BoW" },
 ];
 
 export { MODEL_OPTIONS, VECTORIZER_OPTIONS };

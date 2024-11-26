@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   MODEL_OPTIONS,
@@ -9,6 +9,7 @@ import { setReview, setModel, setVectorizer, setResult } from "./redux/actions";
 
 const App = () => {
   const dispatch = useDispatch();
+  const [error, setError] = useState("");
 
   const review = useSelector((state) => state.review);
   const selectedModel = useSelector((state) => state.selectedModel);
@@ -16,7 +17,9 @@ const App = () => {
   const result = useSelector((state) => state.result);
 
   const handleReviewChange = (e) => {
-    dispatch(setReview(e.target.value));
+    const value = e.target.value;
+    dispatch(setReview(value));
+    setError(""); // Clear error as user types
   };
 
   const handleModelChange = (e) => {
@@ -29,6 +32,12 @@ const App = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate input
+    if (!review.trim()) {
+      setError("Review cannot be empty.");
+      return;
+    }
 
     try {
       const response = await fetch(API_URL, {
@@ -56,12 +65,6 @@ const App = () => {
       : result === "Negative"
       ? "bg-red-500 text-white"
       : "bg-gray-100 text-gray-700";
-
-  const handleSelectReview = (item) => {
-    dispatch(setReview(item.text));
-    dispatch(setModel(item.model));
-    dispatch(setVectorizer(item.vectorizer));
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -123,6 +126,12 @@ const App = () => {
         {result && (
           <div className={`mt-6 p-4 text-center rounded border ${resultColor}`}>
             <span className="font-semibold">Sentiment:</span> {result}
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-4 p-4 text-center bg-red-100 text-red-700 rounded border border-red-300">
+            {error}
           </div>
         )}
       </div>
